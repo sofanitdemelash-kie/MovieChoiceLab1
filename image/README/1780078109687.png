@@ -1,0 +1,101 @@
+## 12. Future Improvements
+# Movie Choice Lab
+
+A small Java console application that helps a player choose what to watch while tracking decision behaviors (hints used, items viewed, filters used, backtracks, and time taken). This README summarizes the project, the source files, and how to build and run the program.
+
+## Quick Summary
+
+- Language: Java (default package)
+- Entry point: `Main.java`
+- Interaction: Console-based menu (view, filter, hint, finish)
+- Decision tracking: `DecisionTracker` computes a simple score and returns one of `Satisficer`, `Balanced Chooser`, or `Maximizer`.
+
+## Project files (src)
+
+- `Main.java` — application entry point; starts the game.
+- `Game.java` — game loop, menu, content loading, user interaction.
+- `Player.java` — stores player name and mood.
+- `WatchContent.java` — base class with common fields and `getHint()` / `getHint(String mood)` overloads.
+- `Movie.java` — `WatchContent` subtype (Type: Movie).
+- `Series.java` — `WatchContent` subtype (includes `episodes`).
+- `Documentary.java` — `WatchContent` subtype (includes `topic`).
+- `ContentItem.java` — alternate/simple content model (kept for reference / assignment requirements).
+- `DecisionTracker.java` — records actions and time, computes the final decision profile and prints a summary.
+
+## Features
+
+- View available content with titles and genres.
+- Filter by genre.
+- Ask for a general and mood-specific hint for an item.
+- Mark a viewed item as your final choice.
+- Tracks interaction metrics and time, and shows a summary at the end.
+
+## Prerequisites
+
+- Java JDK 11+ installed (the project was tested with JDK 19).
+- Optional: Maven if you prefer using `mvn` commands and a `pom.xml` exists.
+
+## Build & run (recommended)
+
+From the project root (the folder that contains `src`):
+
+Windows (PowerShell / CMD):
+
+```powershell
+mkdir bin
+javac -d bin src\*.java
+java -cp bin Main
+```
+
+Notes:
+
+- If `javac` fails compiling all files at once, compile using an IDE or compile files in dependency order.
+- Because sources use the default package, keeping them in `src` and compiling to a `bin` directory works well for small projects.
+
+## Build & run (Maven)
+
+If a `pom.xml` is present you can run (from project root):
+
+```bash
+mvn -B compile
+mvn -B exec:java -Dexec.mainClass=Main
+```
+
+Run tests (if present):
+
+```bash
+mvn -B test
+```
+
+The workspace contains example VS Code tasks that run `mvn -B verify` and `mvn -B test`.
+
+## Usage (what to expect)
+
+1. Enter your name when prompted.
+2. Choose your mood from the provided options.
+3. Use the main menu numbers to interact:
+   - `1` View all content — shows list and lets you view details; optionally make it your final choice.
+   - `2` Filter by genre — enter a genre string (e.g., `Comedy`, `Sci-Fi`).
+   - `3` Ask for hint — pick an item to get a general and mood-based hint.
+   - `4` Go back — returns to the previous menu flow.
+   - `5` Finish — end the game and display the final choice and the decision tracker summary.
+
+## Notes and limitations
+
+- Content is hard-coded in `Game.loadContents()`.
+- No persistence or external APIs are used.
+- Input validation is minimal; the program expects reasonable numeric and string input.
+
+## Suggestions for improvement
+
+- Add stronger input validation and error handling.
+- Load content from a file or API instead of hard-coding.
+- Persist results to a file for later analysis.
+- Add unit tests for `DecisionTracker` logic and `WatchContent` behaviors.
+- Move classes into named packages for larger projects.
+
+---
+
+README updated with current project file list and run instructions.
+
+File path: c:\Users\yeget\Downloads\README_MovieChoiceLab.md

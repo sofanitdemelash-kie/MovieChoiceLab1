@@ -4,14 +4,17 @@ import java.util.Scanner;
 public class Game {
     private Scanner input;
     private Player player;
-    private ArrayList<ContentItem> contents;
+    private ArrayList<WatchContent> contents;
     private DecisionTracker tracker;
-    private ContentItem finalChoice;
+    private WatchContent finalChoice;
+    private boolean running;
 
     public Game() {
         input = new Scanner(System.in);
         contents = new ArrayList<>();
         tracker = new DecisionTracker();
+        running = true;
+
         loadContents();
     }
 
@@ -21,10 +24,9 @@ public class Game {
 
         tracker.startTimer();
 
-        boolean running = true;
-
         while (running) {
             showMenu();
+
             int choice = input.nextInt();
             input.nextLine();
 
@@ -44,8 +46,7 @@ public class Game {
             }
         }
 
-        // End timer if DecisionTracker supports it. Removed call to undefined endTimer() to compile
-        // (DecisionTracker may not implement endTimer()).
+        tracker.stopTimer();
         showFinalResult();
     }
 
@@ -54,17 +55,40 @@ public class Game {
         System.out.println("Choose one thing to watch tonight.");
     }
 
-    private void createPlayer() {
-        System.out.print("\nEnter your name: ");
-        String name = input.nextLine();
+   private void createPlayer() {
+    System.out.print("\nEnter your name: ");
+    String name = input.nextLine();
 
-        System.out.print("Enter your mood: ");
-        String mood = input.nextLine();
+    System.out.println("\nChoose your mood:");
+    System.out.println("1. Relaxed");
+    System.out.println("2. Curious");
+    System.out.println("3. Excited");
+    System.out.println("4. Tired");
+    System.out.println("5. Stressed");
 
-        player = new Player(name, mood);
+    System.out.print("Choose: ");
+    int moodChoice = input.nextInt();
+    input.nextLine();
 
-        System.out.println("\nHello, " + player.getName() + "!");
+    String mood;
+
+    if (moodChoice == 1) {
+        mood = "Relaxed";
+    } else if (moodChoice == 2) {
+        mood = "Curious";
+    } else if (moodChoice == 3) {
+        mood = "Excited";
+    } else if (moodChoice == 4) {
+        mood = "Tired";
+    } else {
+        mood = "Stressed";
     }
+
+    player = new Player(name, mood);
+
+    System.out.println("\nHello, " + player.getName() + "!");
+    System.out.println("Mood: " + player.getMood());
+}
 
     private void showMenu() {
         System.out.println("\nMain Menu");
@@ -77,14 +101,18 @@ public class Game {
     }
 
     private void loadContents() {
-        contents.add(new ContentItem("The Silent Planet", "Movie", "Sci-Fi", 145, 8.7));
-        contents.add(new ContentItem("Final Laugh", "Movie", "Comedy", 95, 7.4));
-        contents.add(new ContentItem("Dragon Valley", "Movie", "Fantasy", 130, 8.2));
-        contents.add(new ContentItem("Mystery House", "Series", "Mystery", 50, 8.4));
-        contents.add(new ContentItem("Ocean Truth", "Documentary", "Documentary", 80, 8.0));
+        contents.add(new Movie("The Silent Planet", "Sci-Fi", 145, 8.7));
+        contents.add(new Movie("Final Laugh", "Comedy", 95, 7.4));
+        contents.add(new Movie("Dragon Valley", "Fantasy", 130, 8.2));
+
+        contents.add(new Series("Mystery House", "Mystery", 50, 8.4, 8));
+        contents.add(new Series("Funny Days", "Comedy", 30, 7.5, 10));
+
+        contents.add(new Documentary("Ocean Truth", "Documentary", 80, 8.0, "Ocean life"));
+        contents.add(new Documentary("Planet Future", "Sci-Fi", 70, 8.3, "Technology and future"));
     }
 
-    private void viewContents(ArrayList<ContentItem> list) {
+    private void viewContents(ArrayList<WatchContent> list) {
         if (list.isEmpty()) {
             System.out.println("No content found.");
             return;
@@ -99,16 +127,18 @@ public class Game {
         int index = choice - 1;
 
         if (index >= 0 && index < list.size()) {
-            ContentItem selected = list.get(index);
+            WatchContent selected = list.get(index);
+
             selected.showDetails();
             tracker.recordMovieViewed();
 
-            System.out.print("Make this your final choice? yes/no: ");
+            System.out.print("\nMake this your final choice? yes/no: ");
             String answer = input.nextLine();
 
             if (answer.equalsIgnoreCase("yes")) {
                 finalChoice = selected;
                 System.out.println("Final choice saved.");
+                running = false;
             }
         } else {
             System.out.println("Invalid choice.");
@@ -121,10 +151,10 @@ public class Game {
         System.out.print("Enter genre: ");
         String genre = input.nextLine();
 
-        ArrayList<ContentItem> filtered = new ArrayList<>();
+        ArrayList<WatchContent> filtered = new ArrayList<>();
 
-        for (ContentItem item : contents) {
-            if (item.getGenre().equalsIgnoreCase(genre)) {
+        for (WatchContent item : contents) {
+            if (item.matchesGenre(genre)) {
                 filtered.add(item);
             }
         }
@@ -144,18 +174,20 @@ public class Game {
         int index = choice - 1;
 
         if (index >= 0 && index < contents.size()) {
-            ContentItem selected = contents.get(index);
+            WatchContent selected = contents.get(index);
+
+            System.out.println(selected.getHint());
             System.out.println(selected.getHint(player.getMood()));
         } else {
             System.out.println("Invalid choice.");
         }
     }
 
-    private void showContentTitles(ArrayList<ContentItem> list) {
+    private void showContentTitles(ArrayList<WatchContent> list) {
         System.out.println("\nAvailable Content:");
 
         for (int i = 0; i < list.size(); i++) {
-            ContentItem item = list.get(i);
+            WatchContent item = list.get(i);
             System.out.println((i + 1) + ". " + item.getTitle() + " - " + item.getGenre());
         }
     }
