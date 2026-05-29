@@ -671,4 +671,4 @@ File references:
 
 ## Final Note
 
-MovieTwistLab is a simple beginner-level MVP. It keeps the code easy to understand while still demonstrating the required OOP concepts. The project uses a console-based game to show how objects can work together in Java.
+MovieChoiceLab is a simple beginner-level MVP demonstrating the required OOP concepts. The project uses a console-based game to show how objects can work together in Java.
